@@ -1,4 +1,4 @@
-# Clash  of  continents
+# Clash  of  continents unity projet (Tristan & Prince)
 Vous incarnez un des 5 continents, à savoir l’Europe, l’Afrique,
 l’Amérique du Nord, l’Amérique Latine, l’Asie et l’Océanie. Votre but
 sera de bâtir le village le plus robuste et puissant parmi les 5
