@@ -4,12 +4,14 @@ using UnityEngine.InputSystem;
 
 public class GridSystem : MonoBehaviour
 {
-  public GameObject objectToPlace;
+  [Header("Build Catalog")]
+  public List<GameObject> buildPrefabs = new List<GameObject>();
+  public int selectedIndex = 0;
   public float gridSize = 1f;
   public float clickThreshold = 10f;
 
-  public Key toggleBuildKey = Key.B;     // touche pour activer/désactiver le mode construction
-  public bool buildMode = false;         // état actuel (tu peux le voir dans l’inspector)
+  public Key toggleBuildKey = Key.B; // touche pour activer/désactiver le mode construction
+  public bool buildMode = false; // état actuel (tu peux le voir dans l’inspector)
 
   private GameObject ghostObject;
   private readonly HashSet<Vector3> occupiedPositions = new HashSet<Vector3>();
@@ -18,7 +20,7 @@ public class GridSystem : MonoBehaviour
   private Vector2 mousePressPosition;
   private bool isClickCandidate;
   public LayerMask buildPlaneMask; // coche uniquement BuildPlane dans l’inspector
-  public float raycastMaxDistance = 1000f; // ton Plane dans la scène
+  public float raycastMaxDistance = 1000f; // le plane dans la scène
 
   void Awake()
   {
@@ -40,6 +42,7 @@ public class GridSystem : MonoBehaviour
     }
 
     if (!buildMode) return; // caméra continue, mais placement/ghost OFF
+    HandleBuildingHotkeys();
 
     if (Mouse.current == null || cam == null) return;
 
@@ -58,10 +61,18 @@ public class GridSystem : MonoBehaviour
 
   void CreateGhostObject()
   {
-    ghostObject = Instantiate(objectToPlace);
+    if (buildPrefabs == null || buildPrefabs.Count == 0)
+    {
+      Debug.LogWarning("GridSystem: buildPrefabs est vide.");
+      return;
+    }
 
-    var col = ghostObject.GetComponent<Collider>();
-    if (col) col.enabled = false;
+    GameObject prefab = buildPrefabs[Mathf.Clamp(selectedIndex, 0, buildPrefabs.Count - 1)];
+    ghostObject = Instantiate(prefab);
+
+    // Désactive tous les colliders du ghost
+    foreach (var c in ghostObject.GetComponentsInChildren<Collider>())
+      c.enabled = false;
 
     SetGhostColor(new Color(1f, 1f, 1f, 0.5f));
   }
@@ -119,27 +130,27 @@ public class GridSystem : MonoBehaviour
 
   void PlaceObject()
   {
+    if (buildPrefabs == null || buildPrefabs.Count == 0) return;
+
     Vector3 position = ghostObject.transform.position;
     if (occupiedPositions.Contains(position)) return;
 
-    var go = Instantiate(objectToPlace, position, Quaternion.identity);
+    GameObject prefab = buildPrefabs[Mathf.Clamp(selectedIndex, 0, buildPrefabs.Count - 1)];
+    var go = Instantiate(prefab, position, Quaternion.identity);
 
-    // 1) force layer Building si tu veux
     int buildingLayer = LayerMask.NameToLayer("Building");
     if (buildingLayer != -1) SetLayerRecursively(go, buildingLayer);
 
-    // 2) ajoute SelectableBuilding
     if (go.GetComponent<SelectableBuilding>() == null)
       go.AddComponent<SelectableBuilding>();
 
-    // 3) ajoute un BoxCollider si aucun collider n’existe déjà
     if (go.GetComponentInChildren<Collider>() == null)
     {
       var bc = go.AddComponent<BoxCollider>();
-
-      // Ajuste la taille du box sur les renderers (comme ça c'est pas un cube au hasard)
       FitBoxColliderToRenderers(go, bc);
     }
+
+    occupiedPositions.Add(position);
   }
 
   void SetGhostColor(Color color)
@@ -169,7 +180,6 @@ public class GridSystem : MonoBehaviour
     for (int i = 1; i < renderers.Length; i++)
       b.Encapsulate(renderers[i].bounds);
 
-    // Monde -> local
     Vector3 centerLocal = go.transform.InverseTransformPoint(b.center);
     Vector3 sizeLocal = go.transform.InverseTransformVector(b.size);
 
@@ -203,8 +213,36 @@ public class GridSystem : MonoBehaviour
   {
     return new Vector3(
         Mathf.Round(pos.x / gridSize) * gridSize,
-        pos.y, // IMPORTANT: on garde exactement la hauteur du plane touché
+        pos.y,
         Mathf.Round(pos.z / gridSize) * gridSize
     );
+  }
+
+  void SelectBuilding(int index)
+  {
+    if (buildPrefabs == null || buildPrefabs.Count == 0) return;
+    index = Mathf.Clamp(index, 0, buildPrefabs.Count - 1);
+    if (selectedIndex == index) return;
+
+    selectedIndex = index;
+
+    if (ghostObject != null) Destroy(ghostObject);
+    CreateGhostObject();
+    ApplyBuildModeState();
+  }
+
+  // La méthode qui permet de sélectionner le bâtiment qu'on souhaite selon la touche appuyée
+  void HandleBuildingHotkeys()
+  {
+    if (Keyboard.current == null) return;
+    if (Keyboard.current.digit1Key.wasPressedThisFrame) SelectBuilding(0);
+    if (Keyboard.current.digit2Key.wasPressedThisFrame) SelectBuilding(1);
+    if (Keyboard.current.digit3Key.wasPressedThisFrame) SelectBuilding(2);
+    if (Keyboard.current.digit4Key.wasPressedThisFrame) SelectBuilding(3);
+    if (Keyboard.current.digit5Key.wasPressedThisFrame) SelectBuilding(4);
+    if (Keyboard.current.digit6Key.wasPressedThisFrame) SelectBuilding(5);
+    if (Keyboard.current.digit7Key.wasPressedThisFrame) SelectBuilding(6);
+    if (Keyboard.current.digit8Key.wasPressedThisFrame) SelectBuilding(7);
+    if (Keyboard.current.digit9Key.wasPressedThisFrame) SelectBuilding(8);
   }
 }

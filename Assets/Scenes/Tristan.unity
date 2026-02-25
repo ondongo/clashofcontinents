@@ -1969,7 +1969,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 213286286}
-  - component: {fileID: 213286287}
   m_Layer: 0
   m_Name: Camera Controller
   m_TagString: Untagged
@@ -1993,18 +1992,6 @@ Transform:
   - {fileID: 330585546}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &213286287
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 213286285}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60b66bd713e34624b84cef58fb484e7a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &223226636
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3102,13 +3089,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: -149.83, y: -3.63, z: -48.75}
+  m_LocalRotation: {x: 0.47547644, y: -0, z: -0, w: 0.8797285}
+  m_LocalPosition: {x: -150.72, y: -1.416, z: -50.347}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 213286286}
-  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 56.781, y: 0, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3166,7 +3153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   zoomMin: 5
-  zoomMax: 20
+  zoomMax: 10
   zoomSpeed: 2
   panSensitivity: 1
   useLimits: 0
@@ -7480,8 +7467,8 @@ Transform:
   m_GameObject: {fileID: 1028293183}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 47.2, y: 22.19, z: 48.52}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 45.71, y: 22.19, z: 47.22}
+  m_LocalScale: {x: 2, y: 1, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -7498,7 +7485,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c6fd07ccbc153467a5717a9c644d859, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridSystem
-  objectToPlace: {fileID: 919132149155446097, guid: c9b5e11f3eb0df3ee8718fa55e277712, type: 3}
+  buildPrefabs:
+  - {fileID: 919132149155446097, guid: c8a34df139f2d0c05bd71ec422d01f04, type: 3}
+  - {fileID: 919132149155446097, guid: 5c6f80c82f385cbc0b8d154bdfd8a0bf, type: 3}
+  - {fileID: 919132149155446097, guid: 85f631840e347ca07a521bca6c6717a8, type: 3}
+  - {fileID: 919132149155446097, guid: 96e3bd68688908a57951b2ae5ae018a1, type: 3}
+  - {fileID: 919132149155446097, guid: b8025ac42091c823c9561c7741dc3761, type: 3}
+  - {fileID: 919132149155446097, guid: 92617b3745551a129b9303d56a443a5d, type: 3}
+  - {fileID: 919132149155446097, guid: 5660e6e190bfe4538a7f969e7d810262, type: 3}
+  selectedIndex: 0
   gridSize: 1
   clickThreshold: 10
   toggleBuildKey: 16
