@@ -6,6 +6,7 @@ public class SelectionManager : MonoBehaviour
     [SerializeField] private GridSystem gridSystem;     // auto si vide
     [SerializeField] private LayerMask buildingLayer;   // auto si vide
     [SerializeField] private float clickThreshold = 10f;
+    public BuildUI ui;
 
     private Camera cam;
 
@@ -79,5 +80,8 @@ public class SelectionManager : MonoBehaviour
         if (current != null) current.SetSelected(false);
         current = next;
         if (current != null) current.SetSelected(true);
+
+        if (ui != null)
+            ui.ShowBuildingInfo(current);
     }
 }
