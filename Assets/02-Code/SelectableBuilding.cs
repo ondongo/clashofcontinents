@@ -2,11 +2,6 @@ using UnityEngine;
 
 public class SelectableBuilding : MonoBehaviour
 {
-    [Header("Info")]
-    public string buildingName;
-    public int level = 1;
-
-    [Header("Selection Visual")]
     public Color selectedEmissionColor = Color.cyan;
     public float emissionIntensity = 2f;
 
@@ -19,15 +14,15 @@ public class SelectableBuilding : MonoBehaviour
         renderers = GetComponentsInChildren<Renderer>(true);
         mpb = new MaterialPropertyBlock();
 
+        // Active l’émission sur les matériaux (sinon _EmissionColor peut être ignoré)
         foreach (var r in renderers)
+        {
             foreach (var m in r.sharedMaterials)
-                if (m != null) m.EnableKeyword("_EMISSION");
-    }
-
-    public void Init(string name, int lvl)
-    {
-        buildingName = name;
-        level = lvl;
+            {
+                if (m == null) continue;
+                m.EnableKeyword("_EMISSION");
+            }
+        }
     }
 
     public void SetSelected(bool value)

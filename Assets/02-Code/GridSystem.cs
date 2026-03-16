@@ -5,9 +5,7 @@ using UnityEngine.InputSystem;
 public class GridSystem : MonoBehaviour
 {
   [Header("Build Catalog")]
-  public List<BuildingData> catalog = new List<BuildingData>();
-  [Header("UI")]
-  public BuildUI ui;
+  public List<GameObject> buildPrefabs = new List<GameObject>();
   public int selectedIndex = 0;
   public float gridSize = 1f;
   public float clickThreshold = 10f;
@@ -23,7 +21,6 @@ public class GridSystem : MonoBehaviour
   private bool isClickCandidate;
   public LayerMask buildPlaneMask; // coche uniquement BuildPlane dans l’inspector
   public float raycastMaxDistance = 1000f; // le plane dans la scène
-  private List<int> remaining = new List<int>();
 
   void Awake()
   {
@@ -32,15 +29,8 @@ public class GridSystem : MonoBehaviour
 
   void Start()
   {
-    remaining.Clear();
-    for (int i = 0; i < catalog.Count; i++)
-      remaining.Add(Mathf.Max(0, catalog[i].initialCount));
-
     CreateGhostObject();
     ApplyBuildModeState();
-
-    if (ui != null)
-      ui.RebuildMenu(catalog, remaining, selectedIndex, SelectBuilding);
   }
 
   void Update()
@@ -71,13 +61,16 @@ public class GridSystem : MonoBehaviour
 
   void CreateGhostObject()
   {
-    if (catalog == null || catalog.Count == 0) return;
+    if (buildPrefabs == null || buildPrefabs.Count == 0)
+    {
+      Debug.LogWarning("GridSystem: buildPrefabs est vide.");
+      return;
+    }
 
-    var data = catalog[Mathf.Clamp(selectedIndex, 0, catalog.Count - 1)];
-    if (data == null || data.prefab == null) return;
+    GameObject prefab = buildPrefabs[Mathf.Clamp(selectedIndex, 0, buildPrefabs.Count - 1)];
+    ghostObject = Instantiate(prefab);
 
-    ghostObject = Instantiate(data.prefab);
-
+    // Désactive tous les colliders du ghost
     foreach (var c in ghostObject.GetComponentsInChildren<Collider>())
       c.enabled = false;
 
@@ -137,24 +130,19 @@ public class GridSystem : MonoBehaviour
 
   void PlaceObject()
   {
-    if (catalog == null || catalog.Count == 0) return;
-    if (ghostObject == null) return;
-
-    int idx = Mathf.Clamp(selectedIndex, 0, catalog.Count - 1);
-    if (remaining[idx] <= 0) return; // plus de stock
+    if (buildPrefabs == null || buildPrefabs.Count == 0) return;
 
     Vector3 position = ghostObject.transform.position;
     if (occupiedPositions.Contains(position)) return;
 
-    var data = catalog[idx];
-    var go = Instantiate(data.prefab, position, Quaternion.identity);
+    GameObject prefab = buildPrefabs[Mathf.Clamp(selectedIndex, 0, buildPrefabs.Count - 1)];
+    var go = Instantiate(prefab, position, Quaternion.identity);
 
     int buildingLayer = LayerMask.NameToLayer("Building");
     if (buildingLayer != -1) SetLayerRecursively(go, buildingLayer);
 
-    var sb = go.GetComponent<SelectableBuilding>();
-    if (sb == null) sb = go.AddComponent<SelectableBuilding>();
-    sb.Init(data.displayName, data.level);
+    if (go.GetComponent<SelectableBuilding>() == null)
+      go.AddComponent<SelectableBuilding>();
 
     if (go.GetComponentInChildren<Collider>() == null)
     {
@@ -163,43 +151,6 @@ public class GridSystem : MonoBehaviour
     }
 
     occupiedPositions.Add(position);
-
-    // décrémente stock
-    remaining[idx]--;
-
-    // auto-change sélection vers un bâtiment qui reste (optionnel mais logique)
-    if (remaining[idx] <= 0)
-      SelectFirstAvailable();
-
-    // update UI
-    if (ui != null)
-      ui.RefreshMenu(catalog, remaining, selectedIndex, SelectBuilding);
-
-    // si plus rien à placer : stop build mode
-    if (!HasAnyRemaining())
-    {
-      buildMode = false;
-      ApplyBuildModeState();
-    }
-  }
-
-  bool HasAnyRemaining()
-  {
-    for (int i = 0; i < remaining.Count; i++)
-      if (remaining[i] > 0) return true;
-    return false;
-  }
-
-  void SelectFirstAvailable()
-  {
-    for (int i = 0; i < remaining.Count; i++)
-    {
-      if (remaining[i] > 0)
-      {
-        SelectBuilding(i);
-        return;
-      }
-    }
   }
 
   void SetGhostColor(Color color)
@@ -269,9 +220,8 @@ public class GridSystem : MonoBehaviour
 
   void SelectBuilding(int index)
   {
-    if (catalog == null || catalog.Count == 0) return;
-    index = Mathf.Clamp(index, 0, catalog.Count - 1);
-    if (remaining[index] <= 0) return; // pas sélectionnable
+    if (buildPrefabs == null || buildPrefabs.Count == 0) return;
+    index = Mathf.Clamp(index, 0, buildPrefabs.Count - 1);
     if (selectedIndex == index) return;
 
     selectedIndex = index;
@@ -279,9 +229,6 @@ public class GridSystem : MonoBehaviour
     if (ghostObject != null) Destroy(ghostObject);
     CreateGhostObject();
     ApplyBuildModeState();
-
-    if (ui != null)
-      ui.RefreshMenu(catalog, remaining, selectedIndex, SelectBuilding);
   }
 
   // La méthode qui permet de sélectionner le bâtiment qu'on souhaite selon la touche appuyée
