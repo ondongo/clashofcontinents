@@ -77,22 +77,21 @@ namespace DevelopersHub.ClashOfWhatecer
                     for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
                     {
                         if (Player.instanse.data.buildings[i].isConstructing)
-                        {
                             _busyWorkers += 1;
-                        }
-                        if(Player.instanse.data.buildings[i].id != Data.BuildingID.buildershut)
-                        {
-                            continue;
-                        }
-                        _workers += 1;
+                        if (Player.instanse.data.buildings[i].id == Data.BuildingID.buildershut)
+                            _workers += 1;
                     }
                 }
+
+                /* Mode mock : au moins 1 ouvrier disponible  */
+                /* pour que les boutons d achat soient actifs.                              */
+                bool haveWorker = _workers > 0 ? (_workers > _busyWorkers) : true;
 
                 if (ui_buildings != null)
                 {
                     for (int i = 0; i < ui_buildings.Count; i++)
                     {
-                        ui_buildings[i].Initialize(_workers > _busyWorkers);
+                        ui_buildings[i].Initialize(haveWorker);
                     }
                 }
             }

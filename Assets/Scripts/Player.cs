@@ -1,4 +1,4 @@
-﻿namespace DevelopersHub.ClashOfWhatecer
+namespace DevelopersHub.ClashOfWhatecer
 {
     using System.Collections;
     using System.Collections.Generic;
@@ -12,6 +12,15 @@
         public Data.Player data = new Data.Player();
         private static Player _instance = null; public static Player instanse { get { return _instance; } }
         public Data.InitializationData initializationData = new Data.InitializationData();
+
+        [Header("Ressources de départ (test / offline)")]
+        public int startGold = 5000;
+        public int startElixir = 5000;
+        public int startDarkElixir = 500;
+        public int startGems = 500;
+        public int startMaxGold = 100000;
+        public int startMaxElixir = 100000;
+        public int startMaxDarkElixir = 10000;
         private bool _inBattle = false; public static bool inBattle { get { return instanse._inBattle; } set { instanse._inBattle = value; } }
 
         public Data.ServerBuilding GetServerBuilding(Data.BuildingID id, int level)
@@ -70,6 +79,27 @@
             {
                 username = PlayerPrefs.GetString(username_key);
             }
+
+            // Initialise les ressources de départ (actives si le serveur ne répond pas)
+            ApplyStartResources();
+        }
+
+        /// <summary>
+        /// Applique les ressources de départ définies dans l'Inspector.
+        /// Appelée au Start() ; SyncData() les écrasera si le serveur répond.
+        /// </summary>
+        public void ApplyStartResources()
+        {
+            _maxGold = startMaxGold;
+            _maxElixir = startMaxElixir;
+            _maxDarkElixir = startMaxDarkElixir;
+            _gold = Mathf.Clamp(startGold, 0, _maxGold);
+            _elixir = Mathf.Clamp(startElixir, 0, _maxElixir);
+            _darkElixir = Mathf.Clamp(startDarkElixir, 0, _maxDarkElixir);
+            data.gems = startGems;
+
+            if (UI_Main.instanse != null)
+                UpdateResourcesUI();
         }
 
         private void Awake()
@@ -226,7 +256,7 @@
             UI_Main.instanse._xpText.ForceMeshUpdate(true);
         }
 
-        private void UpdateResourcesUI()
+        public void UpdateResourcesUI()
         {
             UI_Main.instanse._goldText.text = _gold.ToString();
             UI_Main.instanse._elixirText.text = _elixir.ToString();

@@ -330,5 +330,57 @@ namespace DevelopersHub.ClashOfWhatecer
             _buildings.Clear();
         }
 
+        /************************************************************/
+        /*  OPENMOCK : ouvre le panel upgrade pour un batiment      */
+        /*  place via GridSystem, sans donnees serveur.             */
+        /*                                                          */
+        /*  Affiche le nom et l icone du batiment.                  */
+        /*  Le bouton Upgrade est desactive (pas de cout mock).     */
+        /*  Tu pourras brancher de vrais couts plus tard.           */
+        /************************************************************/
+        public void OpenMock(Data.BuildingID id, int level)
+        {
+            serverBuilding  = null;
+            selectedInstanse = null;
+            ClearBuildings();
+
+            _requiredBuildingPanel.SetActive(false);
+            _townHallRequiredPanel.SetActive(false);
+
+            /* Niveau et nom */
+            if (_titleLevel    != null) _titleLevel.text    = "Lv " + level;
+            if (_titleBuilding != null)
+            {
+                _titleBuilding.text = Language.instanse != null
+                    ? Language.instanse.GetBuildingName(id)
+                    : id.ToString();
+            }
+
+            /* Icone */
+            if (_icon != null)
+            {
+                Sprite icon = AssetsBank.GetBuildingIcon(id, level);
+                _icon.sprite = (icon != null) ? icon : _defaultIcon;
+            }
+
+            /* Cout upgrade depuis GridSystem si disponible */
+            var entry = GridSystem.instance?.GetBuildingEntry(id);
+            if (entry != null)
+            {
+                if (reqGold   != null) reqGold.text   = entry.costGold.ToString();
+                if (reqElixir != null) reqElixir.text  = entry.costElixir.ToString();
+                if (reqDark   != null) reqDark.text    = entry.costDarkElixir.ToString();
+                if (reqGems   != null) reqGems.text    = entry.costGems.ToString();
+                if (reqTime   != null) reqTime.text    = "0";
+            }
+
+            /* Upgrade desactive en mode mock (pas de logique serveur) */
+            if (_upgradeButton != null) _upgradeButton.interactable = false;
+
+            _detailsPanel.SetActive(true);
+            _active = true;
+            _elements.SetActive(true);
+        }
+
     }
 }
