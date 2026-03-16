@@ -114,7 +114,7 @@ namespace DevelopersHub.ClashOfWhatecer
             readyToStart = false;
             _findButton.gameObject.SetActive(false);
             _closeButton.gameObject.SetActive(false);
-            UI_Search.instanse.Find();
+            
         }
 
         List<Data.Building> startbuildings = new List<Data.Building>();

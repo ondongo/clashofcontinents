@@ -5954,6 +5954,8 @@ MonoBehaviour:
   soundSource: {fileID: 490585841}
   mainMusic: {fileID: 8300000, guid: 744820e7fb0bf1a4f80acd476dfea1f4, type: 3}
   battleMusic: {fileID: 8300000, guid: 034a8b74658e54945ac6c64917e0faaf, type: 3}
+  victoryMusic: {fileID: 0}
+  victorySound: {fileID: 0}
   buttonClickSound: {fileID: 8300000, guid: 16612bc64723f664084d1661a4f93bfc, type: 3}
   goldCollect: {fileID: 0}
   elixirCollect: {fileID: 0}
@@ -47820,6 +47822,9 @@ MonoBehaviour:
   _closeButton: {fileID: 1891535923}
   _findButton: {fileID: 1673654727}
   _costText: {fileID: 229959330}
+  battleSceneName: BattleScene
+  buttonLabel: Start Battle
+  infoLabel: Lancer une bataille de test
 --- !u!1001 &1227574120
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -64436,7 +64441,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 378, y: 378}
+  m_SizeDelta: {x: 217.7, y: 217.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1673654727
 MonoBehaviour:
