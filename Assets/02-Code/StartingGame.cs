@@ -44,7 +44,7 @@ public class StartingGame : MonoBehaviour
             yield return null;
 
         // 2) On garde le loading affiché pendant un temps minimum
-        float waitTime = 2f;  // durée du loading visible
+        float waitTime = 1f;  // durée du loading visible
         float t = 0f;
         while (t < waitTime)
         {
