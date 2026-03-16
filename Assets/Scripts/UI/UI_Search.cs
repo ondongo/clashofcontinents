@@ -1,105 +1,89 @@
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
 namespace DevelopersHub.ClashOfWhatecer
 {
-    using System.Collections;
-    using System.Collections.Generic;
-    using TMPro;
-    using UnityEngine;
-    using UnityEngine.UI;
-
     public class UI_Search : MonoBehaviour
     {
-
         [SerializeField] private GameObject _elements = null;
         [SerializeField] private Button _closeButton = null;
         [SerializeField] private Button _findButton = null;
         [SerializeField] private TextMeshProUGUI _costText = null;
 
-        private static UI_Search _instance = null; public static UI_Search instanse { get { return _instance; } }
-        private bool _active = true; public bool isActive { get { return _active; } }
-        private long lastTarget = 0;
+        [Header("Battle Test")]
+        [SerializeField] private string battleSceneName = "BattleTest";
+        [SerializeField] private string buttonLabel = "Start Battle";
+        [SerializeField] private string infoLabel = "Lancer une bataille de test";
+
+        private static UI_Search _instance = null;
+        public static UI_Search instanse { get { return _instance; } }
+
+        private bool _active = false;
+        public bool isActive { get { return _active; } }
 
         private void Awake()
         {
             _instance = this;
-            _elements.SetActive(false);
+
+            if (_elements != null)
+                _elements.SetActive(false);
         }
 
         private void Start()
         {
-            _closeButton.onClick.AddListener(Close);
-            _findButton.onClick.AddListener(Find);
+            if (_closeButton != null)
+                _closeButton.onClick.AddListener(Close);
+
+            if (_findButton != null)
+                _findButton.onClick.AddListener(StartBattleScene);
         }
 
         public void SetStatus(bool status)
         {
-            if (status)
-            {
-                lastTarget = 0;
-                Check();
-            }
             _active = status;
-            _elements.SetActive(status);
-            _costText.ForceMeshUpdate(true);
+
+            if (_elements != null)
+                _elements.SetActive(status);
+
+            if (status)
+                RefreshView();
+        }
+
+        private void RefreshView()
+        {
+            if (_costText != null)
+            {
+                _costText.text = infoLabel;
+                _costText.color = Color.white;
+                _costText.ForceMeshUpdate(true);
+            }
+
+            if (_findButton != null)
+            {
+                TextMeshProUGUI buttonText = _findButton.GetComponentInChildren<TextMeshProUGUI>();
+                if (buttonText != null)
+                {
+                    buttonText.text = buttonLabel;
+                    buttonText.ForceMeshUpdate(true);
+                }
+
+                _findButton.interactable = true;
+            }
         }
 
         private void Close()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
             SetStatus(false);
-            UI_Main.instanse.SetStatus(true);
+
+            if (UI_Main.instanse != null)
+                UI_Main.instanse.SetStatus(true);
         }
 
-        public void Find()
+        private void StartBattleScene()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            _findButton.interactable = false;
-            Packet packet = new Packet();
-            packet.Write((int)Player.RequestsID.BATTLEFIND);
-            Sender.TCP_Send(packet);
+            SceneManager.LoadScene(battleSceneName, LoadSceneMode.Single);
         }
-
-        private void Check()
-        {
-            int townHallLevel = 1;
-            for (int i = 0; i < Player.instanse.data.buildings.Count; i++)
-            {
-                if (Player.instanse.data.buildings[i].id == Data.BuildingID.townhall) { townHallLevel = Player.instanse.data.buildings[i].level; break; }
-            }
-            int cost = Data.GetBattleSearchCost(townHallLevel);
-            _costText.text = cost.ToString();
-            if (cost > Player.instanse.gold)
-            {
-                _findButton.interactable = false;
-                _costText.color = Color.red;
-            }
-            else
-            {
-                _findButton.interactable = true;
-                _costText.color = Color.white;
-            }
-        }
-
-        public void FindResponded(long target, Data.OpponentData opponent)
-        {
-            if(target > 0 && opponent != null && target != lastTarget)
-            {
-                SetStatus(false);
-                bool attack = UI_Battle.instanse.Display(opponent.data, opponent.buildings, target, Data.BattleType.normal);
-                if (attack)
-                {
-                    lastTarget = target;
-                }
-                else
-                {
-                    UI_Main.instanse.SetStatus(true);
-                }
-            }
-            else
-            {
-                UI_Battle.instanse.NoTarget();
-                Debug.Log("No target found.");
-            }
-        }
-
     }
 }

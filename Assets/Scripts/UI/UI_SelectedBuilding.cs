@@ -17,6 +17,10 @@ namespace DevelopersHub.ClashOfWhatecer
         private Vector2 buildingNameSize = Vector2.one;
 
         private static UI_SelectedBuilding _instance = null; public static UI_SelectedBuilding instance { get { return _instance; } }
+
+        /* Batiment GridSystem actuellement suivi (null si systeme Building classique) */
+        private SelectableBuilding trackedGridBuilding = null;
+
         private void Awake()
         {
             _instance = this;
@@ -28,12 +32,40 @@ namespace DevelopersHub.ClashOfWhatecer
             _buildingName.anchorMin = Vector3.zero;
             _buildingName.anchorMax = Vector3.zero;
             buildingNameSize = new Vector2(Screen.height * buildingNameHeight * buildingNameAspect, Screen.height * buildingNameHeight);
-            _buildingName.sizeDelta = buildingNameSize * CameraController.instanse.zoomScale;
+
+            /* zoomScale peut venir du vieux CameraController si present */
+            if (CameraController.instanse != null)
+                _buildingName.sizeDelta = buildingNameSize * CameraController.instanse.zoomScale;
+            else
+                _buildingName.sizeDelta = buildingNameSize;
+        }
+
+        /************************************************************/
+        /*  Ouvre le label pour un batiment place via GridSystem    */
+        /************************************************************/
+        public void OpenForGridBuilding(SelectableBuilding sb)
+        {
+            trackedGridBuilding = sb;
+            if (_buildingNameText != null)
+                _buildingNameText.text = sb.buildingID.ToString();
+            _elements.SetActive(true);
+        }
+
+        /************************************************************/
+        /*  Ferme le label                                          */
+        /************************************************************/
+        public void SetStatus(bool active)
+        {
+            if (!active) trackedGridBuilding = null;
+            _elements.SetActive(active);
         }
 
         private void Update()
         {
-            if (Building.selectedInstanse != null)
+            /************************************************************/
+            /*  Systeme classique Building (vieux CameraController)     */
+            /************************************************************/
+            if (Building.selectedInstanse != null && CameraController.instanse != null)
             {
                 _buildingName.sizeDelta = buildingNameSize / CameraController.instanse.zoomScale;
 
@@ -45,16 +77,42 @@ namespace DevelopersHub.ClashOfWhatecer
                 float w = planTopRight.x - planDownLeft.x;
                 float h = planTopRight.y - planDownLeft.y;
 
-                float endW = end.x - planDownLeft.x;
-                float endH = end.y - planDownLeft.y;
-
-                Vector2 screenPoint = new Vector2(endW / w * Screen.width, endH / h * Screen.height);
-
-                Vector2 data = screenPoint;
-                data.y += (_buildingName.rect.height / 2f);
-                _buildingName.anchoredPosition = data;
+                if (Mathf.Abs(w) > 0.001f && Mathf.Abs(h) > 0.001f)
+                {
+                    float endW = end.x - planDownLeft.x;
+                    float endH = end.y - planDownLeft.y;
+                    Vector2 screenPoint = new Vector2(endW / w * Screen.width, endH / h * Screen.height);
+                    Vector2 pos = screenPoint;
+                    pos.y += (_buildingName.rect.height / 2f);
+                    _buildingName.anchoredPosition = pos;
+                }
+                return;
             }
 
+            /************************************************************/
+            /*  Systeme GridSystem : convertit la position monde        */
+            /*  en position ecran via Camera.main.WorldToScreenPoint    */
+            /************************************************************/
+            if (trackedGridBuilding != null && Camera.main != null)
+            {
+                _buildingName.sizeDelta = buildingNameSize;
+
+                /* Position au-dessus du batiment */
+                Vector3 worldTop = trackedGridBuilding.transform.position + Vector3.up * 2f;
+                Vector3 screen   = Camera.main.WorldToScreenPoint(worldTop);
+
+                /* Cache si derriere la camera */
+                if (screen.z < 0)
+                {
+                    _elements.SetActive(false);
+                    return;
+                }
+
+                _elements.SetActive(true);
+                Vector2 pos = new Vector2(screen.x, screen.y);
+                pos.y += _buildingName.rect.height / 2f;
+                _buildingName.anchoredPosition = pos;
+            }
         }
 
     }
