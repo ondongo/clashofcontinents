@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using DevelopersHub.ClashOfWhatecer;
+using ClashOfContinents;
 
 /************************************************************/
 /*                  SELECTABLE BUILDING                     */
