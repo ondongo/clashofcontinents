@@ -43,6 +43,7 @@ namespace ClashOfContinents
         private bool _active = true; public bool isActive { get { return _active; } }
         private int workers = 0;
         private int busyWorkers = 0; public bool haveAvalibaleBuilder { get { return busyWorkers < workers; } }
+        private float _resourcesRefreshTimer;
 
         /*
         public void Log(string text)
@@ -78,15 +79,17 @@ namespace ClashOfContinents
             _battleButton.onClick.AddListener(BattleButtonClicked);
             if (SoundManager.instanse != null)
                 SoundManager.instanse.PlayMusic(SoundManager.instanse.mainMusic);
+            /* Afficher les ressources des le depart (sinon restent vides jusqu'au premier clic shop) */
+            RefreshMainResources();
         }
 
         private void ShopButtonClicked()
         {
             if (SoundManager.instanse != null)
                 SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            if (UI_Shop.instanse != null)
-                UI_Shop.instanse.SetStatus(true);
-            SetStatus(false);
+            // N'ouvrir le shop que s'il peut s'afficher ; ne cacher le menu principal que si le shop s'ouvre
+            if (UI_Shop.instanse != null && UI_Shop.instanse.SetStatus(true))
+                SetStatus(false);
         }
 
         private void BattleButtonClicked()
@@ -112,16 +115,24 @@ namespace ClashOfContinents
             {
                 if (SoundManager.instanse != null && SoundManager.instanse.musicSource != null && SoundManager.instanse.musicSource.clip != SoundManager.instanse.mainMusic)
                     SoundManager.instanse.PlayMusic(SoundManager.instanse.mainMusic);
-                if (Player.instanse != null)
-                {
-                    Player.instanse.RushSyncRequest();
-                    Player.instanse.UpdateResourcesUI();
-                }
-                else
-                    RefreshResourcesFromShop();
+                RefreshMainResources();
             }
             _active = status;
             _elements.SetActive(status);
+        }
+
+        /// <summary>Met a jour or/elixir/gems sur le HUD principal (Player ou shop).</summary>
+        /// <param name="withSyncRequest">Si true, appelle RushSyncRequest (a faire seulement a l'ouverture du menu).</param>
+        private void RefreshMainResources(bool withSyncRequest = true)
+        {
+            if (Player.instanse != null)
+            {
+                if (withSyncRequest)
+                    Player.instanse.RushSyncRequest();
+                Player.instanse.UpdateResourcesUI();
+            }
+            else
+                RefreshResourcesFromShop();
         }
 
         /// <summary>Met à jour l'affichage des ressources (depuis le shop si pas de Player).</summary>
@@ -170,11 +181,18 @@ namespace ClashOfContinents
 
         private void Update()
         {
-
-
             _shieldText.text = "Aucun shield";
 
-
+            /* Rafraichir les ressources periodiquement quand le menu principal est affiche */
+            if (_active && _elements != null && _elements.activeSelf)
+            {
+                _resourcesRefreshTimer += UnityEngine.Time.deltaTime;
+                if (_resourcesRefreshTimer >= 1.5f)
+                {
+                    _resourcesRefreshTimer = 0f;
+                    RefreshMainResources(withSyncRequest: false); /* affichage seulement, pas de sync reseau */
+                }
+            }
         }
 
 

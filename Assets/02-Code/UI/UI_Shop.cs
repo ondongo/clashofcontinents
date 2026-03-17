@@ -132,12 +132,13 @@ namespace ClashOfContinents
             return false;
         }
 
-        public void SetStatus(bool status)
+        /// <returns>true si le statut a bien été appliqué (panel affiché/caché), false si _elements est null.</returns>
+        public bool SetStatus(bool status)
         {
             if (_elements == null)
             {
                 Debug.LogWarning("UI_Shop: assignez '_elements' (le panel du shop) dans l'Inspector Unity.");
-                return;
+                return false;
             }
 
             if (status)
@@ -148,7 +149,7 @@ namespace ClashOfContinents
                     if (_goldText != null) _goldText.text = Player.instanse.gold.ToString();
                     if (_elixirText != null) _elixirText.text = Player.instanse.elixir.ToString();
                     if (_darkText != null) _darkText.text = Player.instanse.darkElixir.ToString();
-                    if (_gemsText != null) _gemsText.text = Player.instanse.data.gems.ToString();
+                    if (_gemsText != null && Player.instanse.data != null) _gemsText.text = Player.instanse.data.gems.ToString();
                 }
                 else
                 {
@@ -178,12 +179,16 @@ namespace ClashOfContinents
                     for (int i = 0; i < ui_buildings.Count; i++)
                     {
                         if (ui_buildings[i] != null)
-                            ui_buildings[i].Initialize(haveWorker);
+                        {
+                            try { ui_buildings[i].Initialize(haveWorker); }
+                            catch (System.Exception e) { Debug.LogWarning($"UI_Shop: Initialize building {i}: {e.Message}"); }
+                        }
                     }
                 }
             }
             _active = status;
             _elements.SetActive(status);
+            return true;
         }
 
         public bool PlaceBuilding(Data.BuildingID id, int x = -1, int y = -1)

@@ -64,14 +64,26 @@ namespace ClashOfContinents
 
         private void Clicked()
         {
-            SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
+            if (SoundManager.instanse != null)
+                SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
 
             /* Recupere la config du batiment dans GridSystem.shopBuildings */
-            var entry = GridSystem.instance?.GetBuildingEntry(_id);
+            if (GridSystem.instance == null)
+            {
+                Debug.LogWarning("UI_Building: GridSystem.instance est null. Verifie la scene.");
+                return;
+            }
+            var entry = GridSystem.instance.GetBuildingEntry(_id);
 
             if (entry == null)
             {
-                Debug.LogWarning($"UI_Building: '{_id}' absent de GridSystem.shopBuildings.");
+                Debug.LogWarning($"UI_Building: '{_id}' absent de GridSystem.shopBuildings. Ajoute une entree dans l'Inspector de GridSystem.");
+                return;
+            }
+
+            if (entry.prefab == null)
+            {
+                Debug.LogWarning($"UI_Building: le prefab de '{_id}' n'est pas assigne dans GridSystem.shopBuildings. Assignez le champ 'prefab' dans l'Inspector.");
                 return;
             }
 
@@ -81,22 +93,31 @@ namespace ClashOfContinents
                 return;
             }
 
-            /* Deduit les ressources */
-            Player.instanse.gold       -= entry.costGold;
-            Player.instanse.elixir     -= entry.costElixir;
-            Player.instanse.darkElixir -= entry.costDarkElixir;
-            Player.instanse.data.gems  -= entry.costGems;
-
-            /* Rafraichit le HUD principal (or, elixir, gems affiches en haut) */
-            Player.instanse.UpdateResourcesUI();
+            /* Deduit les ressources (Player ou shop local) */
+            if (Player.instanse != null && Player.instanse.data != null)
+            {
+                Player.instanse.gold       -= entry.costGold;
+                Player.instanse.elixir     -= entry.costElixir;
+                Player.instanse.darkElixir -= entry.costDarkElixir;
+                Player.instanse.data.gems  -= entry.costGems;
+                if (Player.instanse != null)
+                    Player.instanse.UpdateResourcesUI();
+            }
+            else if (UI_Shop.instanse != null)
+            {
+                UI_Shop.instanse.gold       -= entry.costGold;
+                UI_Shop.instanse.elixir     -= entry.costElixir;
+                UI_Shop.instanse.darkElixir -= entry.costDarkElixir;
+                UI_Shop.instanse.gems      -= entry.costGems;
+            }
 
             /* Ferme le shop et affiche le HUD */
-            UI_Shop.instanse.SetStatus(false);
-            UI_Main.instanse.SetStatus(true);
+            if (UI_Shop.instanse != null) UI_Shop.instanse.SetStatus(false);
+            if (UI_Main.instanse != null) UI_Main.instanse.SetStatus(true);
 
             /* Active le ghost sur le GridSystem → joueur clique pour poser */
             if (!GridSystem.instance.StartPlacingFromShop(_id))
-                Refund(entry); /* rembourse si le prefab est manquant */
+                Refund(entry); /* rembourse si le prefab est manquant ou erreur */
         }
 
 
@@ -118,11 +139,11 @@ namespace ClashOfContinents
             }
 
             /* --- Icone batiment --- */
-            /* Priorite : AssetsBank → icone definie dans shopBuildings */
-            var entry = GridSystem.instance?.GetBuildingEntry(_id);
-            Sprite icon = AssetsBank.GetBuildingIcon(_id);
-            if (icon == null && entry != null) icon = entry.icon;
-            if (icon != null && _icon != null) _icon.sprite = icon;
+            /* Priorite : icone dans GridSystem.shopBuildings puis AssetsBank (pour fonctionner meme si AssetsBank est null) */
+            var entry = GridSystem.instance != null ? GridSystem.instance.GetBuildingEntry(_id) : null;
+            Sprite icon = (entry != null && entry.icon != null) ? entry.icon : AssetsBank.GetBuildingIcon(_id);
+            if (icon != null && _icon != null)
+                _icon.sprite = icon;
 
             /* --- Cout et bouton --- */
             if (entry != null)
@@ -134,22 +155,22 @@ namespace ClashOfContinents
                 if (entry.costGold > 0)
                 {
                     if (_resourceText != null) _resourceText.text   = entry.costGold.ToString();
-                    if (_resourceIcon != null) _resourceIcon.sprite = AssetsBank.instanse.goldIcon;
+                    if (_resourceIcon != null && AssetsBank.instanse != null) _resourceIcon.sprite = AssetsBank.instanse.goldIcon;
                 }
                 else if (entry.costElixir > 0)
                 {
                     if (_resourceText != null) _resourceText.text   = entry.costElixir.ToString();
-                    if (_resourceIcon != null) _resourceIcon.sprite = AssetsBank.instanse.elixirIcon;
+                    if (_resourceIcon != null && AssetsBank.instanse != null) _resourceIcon.sprite = AssetsBank.instanse.elixirIcon;
                 }
                 else if (entry.costDarkElixir > 0)
                 {
                     if (_resourceText != null) _resourceText.text   = entry.costDarkElixir.ToString();
-                    if (_resourceIcon != null) _resourceIcon.sprite = AssetsBank.instanse.darkIcon;
+                    if (_resourceIcon != null && AssetsBank.instanse != null) _resourceIcon.sprite = AssetsBank.instanse.darkIcon;
                 }
                 else
                 {
                     if (_resourceText != null) _resourceText.text   = entry.costGems.ToString();
-                    if (_resourceIcon != null) _resourceIcon.sprite = AssetsBank.instanse.gemsIcon;
+                    if (_resourceIcon != null && AssetsBank.instanse != null) _resourceIcon.sprite = AssetsBank.instanse.gemsIcon;
                 }
 
                 bool affordable = CanAfford(entry);
@@ -162,7 +183,7 @@ namespace ClashOfContinents
                 if (_resourceText != null) { _resourceText.color = Color.white; _resourceText.text = "0"; }
                 if (_timeText     != null) _timeText.text  = "0";
                 if (_countText    != null) _countText.text = "-";
-                if (_resourceIcon != null) _resourceIcon.sprite = AssetsBank.instanse.gemsIcon;
+                if (_resourceIcon != null && AssetsBank.instanse != null) _resourceIcon.sprite = AssetsBank.instanse.gemsIcon;
                 if (_button       != null) _button.interactable = haveWorker;
             }
 
@@ -189,6 +210,16 @@ namespace ClashOfContinents
 
         private bool CanAfford(GridSystem.ShopBuildingEntry entry)
         {
+            if (Player.instanse == null || Player.instanse.data == null)
+            {
+                /* Mode sans Player : utiliser les ressources locales du shop si disponible */
+                if (UI_Shop.instanse != null)
+                    return UI_Shop.instanse.gold >= entry.costGold
+                        && UI_Shop.instanse.elixir >= entry.costElixir
+                        && UI_Shop.instanse.darkElixir >= entry.costDarkElixir
+                        && UI_Shop.instanse.gems >= entry.costGems;
+                return false;
+            }
             return Player.instanse.gold       >= entry.costGold
                 && Player.instanse.elixir     >= entry.costElixir
                 && Player.instanse.darkElixir >= entry.costDarkElixir
@@ -197,10 +228,21 @@ namespace ClashOfContinents
 
         private void Refund(GridSystem.ShopBuildingEntry entry)
         {
-            Player.instanse.gold       += entry.costGold;
-            Player.instanse.elixir     += entry.costElixir;
-            Player.instanse.darkElixir += entry.costDarkElixir;
-            Player.instanse.data.gems  += entry.costGems;
+            if (Player.instanse != null && Player.instanse.data != null)
+            {
+                Player.instanse.gold       += entry.costGold;
+                Player.instanse.elixir     += entry.costElixir;
+                Player.instanse.darkElixir += entry.costDarkElixir;
+                Player.instanse.data.gems  += entry.costGems;
+                Player.instanse.UpdateResourcesUI();
+            }
+            else if (UI_Shop.instanse != null)
+            {
+                UI_Shop.instanse.gold       += entry.costGold;
+                UI_Shop.instanse.elixir     += entry.costElixir;
+                UI_Shop.instanse.darkElixir += entry.costDarkElixir;
+                UI_Shop.instanse.gems      += entry.costGems;
+            }
         }
     }
 }
