@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using DevelopersHub.ClashOfWhatecer;
+using ClashOfContinents;
 
 public class StartingGame : MonoBehaviour
 {
@@ -30,7 +30,6 @@ public class StartingGame : MonoBehaviour
         if (SoundManager.instanse != null && SoundManager.instanse.buttonClickSound != null)
             SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
 
-        Loading.Open();
         StartCoroutine(LoadSceneCoroutine());
     }
 
@@ -51,9 +50,6 @@ public class StartingGame : MonoBehaviour
             t += Time.deltaTime;
             yield return null;
         }
-
-        // 3) On ferme le loading et on active la nouvelle scène
-        Loading.Close();
         async.allowSceneActivation = true;
     }
 }

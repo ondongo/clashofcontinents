@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
-using DevelopersHub.ClashOfWhatecer;
+using ClashOfContinents;
 
 /************************************************************/
 /*                      GRIDSYSTEM                          */

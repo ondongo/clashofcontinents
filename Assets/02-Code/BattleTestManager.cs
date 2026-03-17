@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using DevelopersHub.ClashOfWhatecer;
+using ClashOfContinents;
 
 public class BattleTestManager : MonoBehaviour
 {
