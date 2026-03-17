@@ -7,7 +7,7 @@ public class StartingGame : MonoBehaviour
 {
     public string sceneName;
     private Button btn;
-    private GameObject textStartButton;   // <- ajout
+    private GameObject textStartButton;
 
     void Start()
     {
@@ -17,13 +17,11 @@ public class StartingGame : MonoBehaviour
         btn = GameObject.Find("StartButton").GetComponent<Button>();
         btn.onClick.AddListener(OnClick);
 
-        // on récupère l'enfant qui contient le texte
         textStartButton = GameObject.Find("TextStartButton");
     }
 
     public void OnClick()
     {
-        // On désactive complètement l'objet du bouton (plus visible, plus cliquable)
         if (btn != null)
             btn.gameObject.SetActive(false);
 
@@ -38,12 +36,10 @@ public class StartingGame : MonoBehaviour
         AsyncOperation async = SceneManager.LoadSceneAsync(sceneName);
         async.allowSceneActivation = false;
 
-        // 1) On attend que la scène soit quasiment prête
         while (!async.isDone && async.progress < 0.9f)
             yield return null;
 
-        // 2) On garde le loading affiché pendant un temps minimum
-        float waitTime = 1f;  // durée du loading visible
+        float waitTime = 1f;
         float t = 0f;
         while (t < waitTime)
         {

@@ -6,7 +6,6 @@ using ClashOfContinents;
 public class CUIColorPicker : MonoBehaviour
 {
 
-    /* Couleur exposee et synchronisee avec l'UI */
     public Color Color { get { return _color; } set { Setup(value); } }
 
     public void SetOnValueChangeCallback(Action<Color> onValueChange)
@@ -45,7 +44,6 @@ public class CUIColorPicker : MonoBehaviour
 
     private static bool GetLocalMouse(GameObject go, out Vector2 result)
     {
-        /* Convertit la position pointeur ecran en position locale du widget */
         var rt = (RectTransform)go.transform;
         var mp = rt.InverseTransformPoint(ClashOfContinents.CameraController.instanse.inputs.Main.PointerPosition.ReadValue<Vector2>());
         result.x = Mathf.Clamp(mp.x, rt.rect.min.x, rt.rect.max.x);
@@ -147,7 +145,7 @@ public class CUIColorPicker : MonoBehaviour
         Action dragSV = null;
         Action idle = () =>
         {
-            if (ClashOfContinents.CameraController.instanse.inputs.Main.Move.WasPressedThisFrame()/*Input.GetMouseButtonDown(0)*/)
+            if (ClashOfContinents.CameraController.instanse.inputs.Main.Move.WasPressedThisFrame())
             {
                 Vector2 mp;
                 if (GetLocalMouse(hueGO, out mp))
@@ -168,7 +166,7 @@ public class CUIColorPicker : MonoBehaviour
             applyHue();
             applySaturationValue();
             hueKnob.transform.localPosition = new Vector2(hueKnob.transform.localPosition.x, mp.y);
-            if (ClashOfContinents.CameraController.instanse.inputs.Main.Move.WasReleasedThisFrame()/*Input.GetMouseButtonUp(0)*/)
+            if (ClashOfContinents.CameraController.instanse.inputs.Main.Move.WasReleasedThisFrame())
             {
                 _update = idle;
             }
@@ -181,7 +179,7 @@ public class CUIColorPicker : MonoBehaviour
             Value = mp.y / satvalSz.y;
             applySaturationValue();
             satvalKnob.transform.localPosition = mp;
-            if (ClashOfContinents.CameraController.instanse.inputs.Main.Move.WasReleasedThisFrame()/*Input.GetMouseButtonUp(0)*/)
+            if (ClashOfContinents.CameraController.instanse.inputs.Main.Move.WasReleasedThisFrame())
             {
                 _update = idle;
             }

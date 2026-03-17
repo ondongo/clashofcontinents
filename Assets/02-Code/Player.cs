@@ -66,7 +66,6 @@ namespace ClashOfContinents
 
         private void Start()
         {
-            // Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.Full);
             string device = SystemInfo.deviceUniqueIdentifier;
             string password = "";
             string username = "";
@@ -79,14 +78,9 @@ namespace ClashOfContinents
                 username = PlayerPrefs.GetString(username_key);
             }
 
-            // Initialise les ressources de départ (actives si le serveur ne répond pas)
             ApplyStartResources();
         }
 
-        /// <summary>
-        /// Applique les ressources de départ définies dans l'Inspector.
-        /// Appelée au Start() ; SyncData() les écrasera si le serveur répond.
-        /// </summary>
         public void ApplyStartResources()
         {
             _maxGold = startMaxGold;
@@ -195,13 +189,6 @@ namespace ClashOfContinents
                 }
             }
 
-            /*
-            for (int i = 0; i < player.units.Count; i++)
-            {
-
-            }
-            */
-            // Si le serveur n'a pas envoyé de bâtiments (données vides / offline), on garde les valeurs d'init
             if (_maxGold == 0 && _maxElixir == 0 && _maxDarkElixir == 0)
                 ApplyStartResources();
 
@@ -268,11 +255,6 @@ namespace ClashOfContinents
             {
                 RestartGame();
             }
-            /*
-            else if (layoutIndex == 0)
-            {
-                Application.Quit();
-            }*/
         }
 
         public void AssignServerSpell(ref Data.Spell spell)

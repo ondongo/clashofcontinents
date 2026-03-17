@@ -42,9 +42,6 @@ namespace ClashOfContinents
                 _lastKnowPosition = _target.position;
                 active = true;
                 transform.position = _target.position;
-
-
-                // transform.LookAt(target);
             }
         }
 
@@ -71,25 +68,6 @@ namespace ClashOfContinents
                     transform.position = movePosition;
                     if (Vector3.Distance(movePosition, _lastKnowPosition) <= 0.1f)
                     {
-                        /*
-                        if (_target != null)
-                        {
-                            _target.TakeDamage(_damage, _splashRange, _slowTime, _slowPercentage);
-                            if (_hitEffect != null)
-                            {
-                                Transform effect = Instantiate(_hitEffect, transform.position, Quaternion.Euler(0, 0, 0)).transform;
-                                effect.localScale = Vector3.one;
-                            }
-                        }
-                        else
-                        {
-                            if (_missEffect != null)
-                            {
-                                Transform effect = Instantiate(_missEffect, transform.position, Quaternion.Euler(0, 0, 0)).transform;
-                                effect.localScale = Vector3.one;
-                            }
-                        }
-                        */
                         Destroy(gameObject);
                     }
                 }

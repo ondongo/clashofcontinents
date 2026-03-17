@@ -200,7 +200,6 @@ namespace ClashOfContinents
                 }
                 else
                 {
-                    // Building is at max level
                     _maxLevelPanel.SetActive(true);
                     _detailsPanel.SetActive(false);
                 }
@@ -270,14 +269,6 @@ namespace ClashOfContinents
             _buildings.Clear();
         }
 
-        /************************************************************/
-        /*  OPENMOCK : ouvre le panel upgrade pour un batiment      */
-        /*  place via GridSystem, sans donnees serveur.             */
-        /*                                                          */
-        /*  Affiche le nom et l icone du batiment.                  */
-        /*  Le bouton Upgrade est desactive (pas de cout mock).     */
-        /*  Tu pourras brancher de vrais couts plus tard.           */
-        /************************************************************/
         public void OpenMock(Data.BuildingID id, int level)
         {
             serverBuilding  = null;
@@ -287,21 +278,18 @@ namespace ClashOfContinents
             _requiredBuildingPanel.SetActive(false);
             _townHallRequiredPanel.SetActive(false);
 
-            /* Niveau et nom */
             if (_titleLevel    != null) _titleLevel.text    = "Lv " + level;
             if (_titleBuilding != null)
             {
                 _titleBuilding.text = id.ToString();
             }
 
-            /* Icone */
             if (_icon != null)
             {
                 Sprite icon = AssetsBank.GetBuildingIcon(id, level);
                 _icon.sprite = (icon != null) ? icon : _defaultIcon;
             }
 
-            /* Cout upgrade depuis GridSystem si disponible */
             var entry = GridSystem.instance?.GetBuildingEntry(id);
             if (entry != null)
             {
@@ -312,7 +300,6 @@ namespace ClashOfContinents
                 if (reqTime   != null) reqTime.text    = "0";
             }
 
-            /* Upgrade desactive en mode mock (pas de logique serveur) */
             if (_upgradeButton != null) _upgradeButton.interactable = false;
 
             _detailsPanel.SetActive(true);

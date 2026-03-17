@@ -175,7 +175,7 @@ public class BattleTestManager : MonoBehaviour
         bot.team = 0;
 
         deployedCounts[selectedTroopIndex]++;
-        totalPlayerTroopsPlaced++; // AJOUT IMPORTANT
+        totalPlayerTroopsPlaced++;
 
         if (SoundManager.instanse != null && SoundManager.instanse.placeUnitSound != null)
             SoundManager.instanse.PlaySound(SoundManager.instanse.placeUnitSound);
@@ -266,14 +266,12 @@ public class BattleTestManager : MonoBehaviour
             else if (bot.team == 1) enemyCount++;
         }
 
-        // Victoire : si plus aucun ennemi
         if (enemyCount <= 0)
         {
             ShowVictory();
             return;
         }
 
-        // Défaite : seulement si le joueur a déjà commencé à poser des troupes
         if (totalPlayerTroopsPlaced > 0 && playerCount <= 0)
         {
             ShowDefeat();

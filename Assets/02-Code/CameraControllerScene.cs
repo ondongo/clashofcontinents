@@ -119,8 +119,7 @@ public class CameraControllerScene : MonoBehaviour
  
         if (ground.Raycast(ray, out float distance))
             return ray.GetPoint(distance);
- 
-        // fallback : point devant la caméra si jamais elle regarde mal
+
         return cachedTransform.position + cachedTransform.forward * 10f;
     }
 }

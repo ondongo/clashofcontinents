@@ -105,9 +105,6 @@ namespace ClashOfContinents
 
         public Vector3 GetStartPosition(int x, int y)
         {
-            //Vector3 position = transform.position;
-            //position += (transform.right.normalized * x * _cellSize) + (transform.forward.normalized * y * _cellSize);
-            //return position;
             return grid.CellToWorld(new Vector3Int(x, y, 0));
         }
 
@@ -126,9 +123,6 @@ namespace ClashOfContinents
 
         public Vector3 GetCenterPosition(int x, int y, int rows, int columns)
         {
-            //Vector3 position = GetStartPosition(x, y);
-            //position += (transform.right.normalized * columns * _cellSize / 2f) + (transform.forward.normalized * rows * _cellSize / 2f);
-            //return position;
             Vector3 start = grid.CellToWorld(new Vector3Int(x, y, 0));
             Vector3 end = grid.CellToWorld(new Vector3Int(x + columns, y + rows, 0));
             return Vector3.Lerp(start, end, 0.5f);
@@ -136,9 +130,6 @@ namespace ClashOfContinents
 
         public Vector3 GetEndPosition(int x, int y, int rows, int columns)
         {
-            // Vector3 position = GetStartPosition(x, y);
-            // position += (transform.right.normalized * columns * _cellSize) + (transform.forward.normalized * rows * _cellSize);
-            // return position;
             return CellToWorld(x + columns, y + rows);
         }
 
@@ -148,13 +139,7 @@ namespace ClashOfContinents
         }
 
         public bool IsWorldPositionIsOnPlane(Vector3 position, int x, int y, int rows, int columns)
-        {/*
-            position = transform.InverseTransformPoint(position);
-            Rect rect = new Rect(x, y, columns, rows);
-            if(rect.Contains(new Vector2(position.x, position.z)))
-            {
-                return true;
-            }*/
+        {
             return false;
         }
 

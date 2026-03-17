@@ -79,8 +79,7 @@ namespace ClashOfContinents
 
         private void Confirm()
         {
-            //SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            if (Building.buildInstanse != null/* && UI_Main.instanse._grid.CanPlaceBuilding(Building.instanse, Building.instanse.currentX, Building.instanse.currentY)*/)
+            if (Building.buildInstanse != null)
             {
                 isBuildingWall = (Building.buildInstanse.id == Data.BuildingID.wall);
                 if (!isBuildingWall)
@@ -275,7 +274,6 @@ namespace ClashOfContinents
         {
             if (warIndex >= 0)
             {
-                //UI_WarLayout.instanse.buildingItems[warIndex].PlaceWall(x, y);
             }
             else
             {

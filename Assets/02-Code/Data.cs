@@ -176,7 +176,6 @@ namespace ClashOfContinents
 
         public static bool IsMessageGoodToSend(string message)
         {
-            // if (message.Contains("fork")) { return false; }
             return true;
         }
 
@@ -347,7 +346,6 @@ namespace ClashOfContinents
             barbarian = 0, archer = 1, goblin = 2, healer = 3, wallbreaker = 4, giant = 5, miner = 6, balloon = 7, wizard = 8, dragon = 9, pekka = 10, babydragon = 11, electrodragon = 12, yeti = 13, dragonrider = 14, electrotitan = 15, minion = 16, hogrider = 17, valkyrie = 18, golem = 19, witch = 20, lavahound = 21, bowler = 22, icegolem = 23, headhunter = 24, skeleton = 25, bat = 26
         }
 
-        // Spells that their effects have been applied to the project: lightning, healing, rage, freeze, invisibility, haste
         public enum SpellID
         {
             lightning = 0, healing = 1, rage = 2, jump = 3, freeze = 4, invisibility = 5, recall = 6, earthquake = 7, haste = 8, skeleton = 9, bat = 10
@@ -518,7 +516,6 @@ namespace ClashOfContinents
                 case SpellID.lightning: return spellFactoryLevel >= 1;
                 case SpellID.healing: return spellFactoryLevel >= 2;
                 case SpellID.rage: return spellFactoryLevel >= 3;
-                //case SpellID.jump: return spellFactoryLevel >= 4;
                 case SpellID.freeze: return spellFactoryLevel >= 4;
                 case SpellID.invisibility: return spellFactoryLevel >= 5;
                 case SpellID.earthquake: return darkSpellFactoryLevel >= 1;
@@ -744,7 +741,6 @@ namespace ClashOfContinents
 
         public class BattleData
         {
-            //public Battle battle = null;
             public BattleType type = BattleType.normal;
             public List<BattleFrame> savedFrames = new List<BattleFrame>();
             public List<BattleFrame> frames = new List<BattleFrame>();

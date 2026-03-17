@@ -20,7 +20,6 @@ namespace ClashOfContinents
         private void Clicked()
         {
             SoundManager.instanse.PlaySound(SoundManager.instanse.buttonClickSound);
-            // ToDo: Purchase Product
         }
 
         public void SetStatus(bool enabled)

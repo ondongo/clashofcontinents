@@ -17,7 +17,7 @@ namespace ClashOfContinents
             {
                 if (!(lastChange >= Player.instanse.lastUpdateSent && UI_Main.instanse.isActive))
                 {
-                    if(_data.level <= value.level) // TODO -> This will be an issue if you implement building downgrade in the game
+                    if(_data.level <= value.level)
                     {
                         _data = value; DataSet();
                     }
@@ -108,7 +108,6 @@ namespace ClashOfContinents
 
         public static Vector2Int GetBuildingPosition(Data.Building building, int layout = 0)
         {
-            //if (layout == 0) { layout = UI_WarLayout.instanse.isActive ? 2 : 1; }
             if (layout == 2)
             {
                 return new Vector2Int(building.warX, building.warY);
@@ -306,60 +305,6 @@ namespace ClashOfContinents
                 }
                 _angleIndex = closest;
                 if (_levels[levelIndex].angles[_angleIndex] != null && _levels[levelIndex].angles[_angleIndex].renderer != null) { _levels[levelIndex].angles[_angleIndex].renderer.gameObject.SetActive(true); }
-
-
-
-/*
-                if (_levels[levelIndex].rotations.r000 != null) { _levels[levelIndex].rotations.r000.gameObject.SetActive(false); }
-                if (_levels[levelIndex].rotations.r045 != null) { _levels[levelIndex].rotations.r045.gameObject.SetActive(false); }
-                if (_levels[levelIndex].rotations.r090 != null) { _levels[levelIndex].rotations.r090.gameObject.SetActive(false); }
-                if (_levels[levelIndex].rotations.r135 != null) { _levels[levelIndex].rotations.r135.gameObject.SetActive(false); }
-                if (_levels[levelIndex].rotations.r180 != null) { _levels[levelIndex].rotations.r180.gameObject.SetActive(false); }
-                if (_levels[levelIndex].rotations.r225 != null) { _levels[levelIndex].rotations.r225.gameObject.SetActive(false); }
-                if (_levels[levelIndex].rotations.r270 != null) { _levels[levelIndex].rotations.r270.gameObject.SetActive(false); }
-                if (_levels[levelIndex].rotations.r315 != null) { _levels[levelIndex].rotations.r315.gameObject.SetActive(false); }
-
-                if (_angle >= 337.5f || _angle <= 22.5f)
-                {
-                    // 0
-                    if (_levels[levelIndex].rotations.r000 != null) { _levels[levelIndex].rotations.r000.gameObject.SetActive(true); }
-                }
-                else if (_angle <= 67.5f)
-                {
-                    // 45
-                    if (_levels[levelIndex].rotations.r045 != null) { _levels[levelIndex].rotations.r045.gameObject.SetActive(true); }
-                }
-                else if (_angle <= 112.5f)
-                {
-                    // 90
-                    if (_levels[levelIndex].rotations.r090 != null) { _levels[levelIndex].rotations.r090.gameObject.SetActive(true); }
-                }
-                else if (_angle <= 157.5f)
-                {
-                    // 135
-                    if (_levels[levelIndex].rotations.r135 != null) { _levels[levelIndex].rotations.r135.gameObject.SetActive(true); }
-                }
-                else if (_angle <= 202.5f)
-                {
-                    // 180
-                    if (_levels[levelIndex].rotations.r180 != null) { _levels[levelIndex].rotations.r180.gameObject.SetActive(true); }
-                }
-                else if (_angle <= 247.5f)
-                {
-                    // 225
-                    if (_levels[levelIndex].rotations.r225 != null) { _levels[levelIndex].rotations.r225.gameObject.SetActive(true); }
-                }
-                else if (_angle <= 292.5f)
-                {
-                    // 270
-                    if (_levels[levelIndex].rotations.r270 != null) { _levels[levelIndex].rotations.r270.gameObject.SetActive(true); }
-                }
-                else
-                {
-                    // 315
-                    if (_levels[levelIndex].rotations.r315 != null) { _levels[levelIndex].rotations.r315.gameObject.SetActive(true); }
-                }
-                */
             }
         }
 
@@ -661,7 +606,6 @@ namespace ClashOfContinents
             selectedInstanse = this;
             
             UI_SelectedBuilding.instance._elements.SetActive(true);
-            //UI_SelectedBuilding.instance._buildingNameText.SetText(Language.instanse.GetBuildingName(id, data.level));
             UI_SelectedBuilding.instance._buildingNameText.ForceMeshUpdate(true);
             
             if (!scout)
@@ -763,9 +707,7 @@ namespace ClashOfContinents
         {
             if (levelIndex >= 0 && _levels[levelIndex].elements != null && _levels[levelIndex].wall != null)
             {
-                // bool index_r = false;
                 bool index_l = false;
-                // bool index_f = false;
                 bool index_b = false;
                 for (int i = 0; i < UI_Main.instanse._grid.buildings.Count; i++)
                 {
@@ -776,7 +718,6 @@ namespace ClashOfContinents
                     }
                     else if (UI_Main.instanse._grid.buildings[i].currentX == (currentX - 1) && UI_Main.instanse._grid.buildings[i].currentY == currentY)
                     {
-                        // index_r = true;
                     }
                     else if (UI_Main.instanse._grid.buildings[i].currentX == currentX && UI_Main.instanse._grid.buildings[i].currentY == (currentY + 1))
                     {
@@ -784,7 +725,6 @@ namespace ClashOfContinents
                     }
                     else if (UI_Main.instanse._grid.buildings[i].currentX == currentX && UI_Main.instanse._grid.buildings[i].currentY == (currentY - 1))
                     {
-                        // index_f = true;
                     }
                 }
                 if(_levels[levelIndex].wall.left != null)
@@ -799,24 +739,6 @@ namespace ClashOfContinents
                 {
                     _levels[levelIndex].wall.center.gameObject.SetActive(!index_b && !index_l);
                 }
-                /*
-                if (_levels[levelIndex].wall_right != null)
-                {
-                    _levels[levelIndex].wall_right.SetActive(index_r);
-                }
-                if (_levels[levelIndex].wall_left != null)
-                {
-                    _levels[levelIndex].wall_left.SetActive(index_l);
-                }
-                if (_levels[levelIndex].wall_front != null)
-                {
-                    _levels[levelIndex].wall_front.SetActive(index_f);
-                }
-                if (_levels[levelIndex].wall_back != null)
-                {
-                    _levels[levelIndex].wall_back.SetActive(index_b);
-                }
-                */
             }
         }
 

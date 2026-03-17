@@ -9,7 +9,6 @@ namespace ClashOfContinents
     public class UI_Main : MonoBehaviour
     {
 
-        //[SerializeField] public TextMeshProUGUI logTest = null;
         [SerializeField] public GameObject _elements = null;
         [SerializeField] public TextMeshProUGUI _goldText = null;
         [SerializeField] public TextMeshProUGUI _elixirText = null;
@@ -43,13 +42,6 @@ namespace ClashOfContinents
         private bool _active = true; public bool isActive { get { return _active; } }
         private int workers = 0;
         private int busyWorkers = 0; public bool haveAvalibaleBuilder { get { return busyWorkers < workers; } }
-
-        /*
-        public void Log(string text)
-        {
-            logTest.text = logTest.text + "\n" + text;
-        }
-        */
 
         private void Awake()
         {
@@ -124,7 +116,6 @@ namespace ClashOfContinents
             _elements.SetActive(status);
         }
 
-        /// <summary>Met à jour l'affichage des ressources (depuis le shop si pas de Player).</summary>
         public void RefreshResourcesFromShop()
         {
             if (UI_Shop.instanse == null) return;
@@ -137,7 +128,6 @@ namespace ClashOfContinents
             if (_darkBar != null) _darkBar.fillAmount = UI_Shop.instanse.maxDarkElixir > 0 ? (float)UI_Shop.instanse.darkElixir / UI_Shop.instanse.maxDarkElixir : 0f;
         }
 
-        /// <param name="overrideServer">Optionnel : données du bâtiment (sinon pris depuis Player).</param>
         public (Building, Data.ServerBuilding) GetBuildingPrefab(Data.BuildingID id, Data.ServerBuilding overrideServer = null)
         {
             Data.ServerBuilding server = overrideServer;
@@ -154,7 +144,6 @@ namespace ClashOfContinents
             return (null, null);
         }
 
-        /// <summary>Liste des bâtiments placés (grille locale, pas de serveur).</summary>
         public List<Data.Building> GetLocalBuildings()
         {
             var list = new List<Data.Building>();

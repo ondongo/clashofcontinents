@@ -8,7 +8,6 @@ namespace ClashOfContinents
     using UnityEngine;
     using UnityEngine.UI;
 
-    /// <summary>Définition d'un bâtiment pour le shop (éditable dans l'Inspector).</summary>
     [System.Serializable]
     public class ShopBuildingDef
     {
@@ -39,12 +38,6 @@ namespace ClashOfContinents
         }
     }
 
-    /// <summary>
-    /// À configurer dans Unity : 1) GameObject actif avec ce script.
-    /// 2) Assigner Elements = le panel (enfant) à afficher/cacher.
-    /// 3) Assigner _goldText, _elixirText, _darkText, _gemsText (TextMeshPro).
-    /// 4) Assigner _closeButton, _buildingsGrid, _buildingPrefab, _buildingsAvailable.
-    /// </summary>
     public class UI_Shop : MonoBehaviour
     {
         [Header("Ressources (utilisées si pas de Player)")]
@@ -81,7 +74,6 @@ namespace ClashOfContinents
         public int maxGold { get => _maxGold; }
         public int maxElixir { get => _maxElixir; }
         public int maxDarkElixir { get => _maxDarkElixir; }
-        /// <summary>Temps du jeu (local), utilisé pour les constructions.</summary>
         public static DateTime GameNow => DateTime.UtcNow;
 
         private void Awake()
@@ -107,7 +99,6 @@ namespace ClashOfContinents
                 _closeButton.onClick.AddListener(CloseShop);
         }
 
-        /// <summary>Données du bâtiment (local, pas de serveur). À remplir dans l'Inspector (_buildingDefs).</summary>
         public Data.ServerBuilding GetBuildingData(Data.BuildingID id, int level)
         {
             if (_buildingDefs == null) return null;
@@ -142,7 +133,6 @@ namespace ClashOfContinents
 
             if (status)
             {
-                // Afficher les ressources : Player si présent, sinon les valeurs locales du shop
                 if (Player.instanse != null)
                 {
                     if (_goldText != null) _goldText.text = Player.instanse.gold.ToString();

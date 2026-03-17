@@ -2,18 +2,6 @@ namespace ClashOfContinents
 {
     using UnityEngine.InputSystem;
 
-    /************************************************************/
-    /*                        CONTROLS                          */
-    /*                                                          */                                                     
-    /*  Expose un action map "Main" avec toutes les actions     */
-    /*  utilisees par CameraController :                        */
-    /*    - Move          : pression/relache du pointeur        */
-    /*    - TouchZoom     : second doigt (pinch zoom)           */
-    /*    - PointerClick  : tap ou clic discret                 */
-    /*    - PointerPosition : position courante du pointeur     */
-    /*    - MouseScroll   : molette souris (axe Y)              */
-    /*    - TouchPosition0/1 : positions des deux doigts pinch  */
-    /************************************************************/
     public class Controls
     {
         public MainActionMap Main { get; }
@@ -26,30 +14,14 @@ namespace ClashOfContinents
         public void Enable()  => Main.Enable();
         public void Disable() => Main.Disable();
 
-        /************************************************************/
-        /*                    MAIN ACTION MAP                       */
-        /************************************************************/
         public class MainActionMap
         {
-            /* Detecte quand le pointeur primaire est presse/relache */
             public InputAction Move           { get; }
-
-            /* Detecte l apparition du second doigt pour le zoom */
             public InputAction TouchZoom      { get; }
-
-            /* Tap ou clic discret sur l ecran */
             public InputAction PointerClick   { get; }
-
-            /* Position continue du pointeur principal */
             public InputAction PointerPosition { get; }
-
-            /* Molette de la souris (retourne float, axe Y) */
             public InputAction MouseScroll    { get; }
-
-            /* Position du premier doigt (pinch) */
             public InputAction TouchPosition0 { get; }
-
-            /* Position du second doigt (pinch) */
             public InputAction TouchPosition1 { get; }
 
             public MainActionMap()

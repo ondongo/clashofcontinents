@@ -48,7 +48,6 @@ namespace ClashOfContinents
 
         private void Awake()
         {
-            // singleton propre
             if (_instance != null && _instance != this)
             {
                 Destroy(gameObject);

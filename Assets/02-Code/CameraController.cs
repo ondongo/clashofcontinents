@@ -332,9 +332,6 @@ namespace ClashOfContinents
             }
             else if (_moving)
             {
-                //Vector2 delta = inputs.Main.PointerPosition.ReadValue<Vector2>() - _moveBasePosition;
-                //_root.position = _moveRootPosition - new Vector3(delta.x * _moveBaseDirection.x, 0, delta.y * _moveBaseDirection.y * 2f);
-
                 Vector2 delta = inputs.Main.PointerPosition.ReadValue<Vector2>() - _moveInputBaseScreenPosition;
                 _root.position = _moveRootBasePosition - new Vector3(delta.x * _moveBaseDirection.x, delta.y * _moveBaseDirection.y, 0);
             }
@@ -433,14 +430,5 @@ namespace ClashOfContinents
             world.z = 0;
             return world;
         }
-        /*
-        public Vector3 CameraScreenPositionToPlanePosition(Vector2 position)
-        {
-            Vector3 point = CameraScreenPositionToWorldPosition(position);
-            float h = point.y - _root.position.y;
-            float x = h / Mathf.Sin(0 * Mathf.Deg2Rad);
-            return point + _camera.transform.forward.normalized * x;
-        }
-        */
     }
 }

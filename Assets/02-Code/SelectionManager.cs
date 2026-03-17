@@ -3,8 +3,8 @@ using UnityEngine.InputSystem;
 
 public class SelectionManager : MonoBehaviour
 {
-    [SerializeField] private GridSystem gridSystem;     // auto si vide
-    [SerializeField] private LayerMask buildingLayer;   // auto si vide
+    [SerializeField] private GridSystem gridSystem;
+    [SerializeField] private LayerMask buildingLayer;
     [SerializeField] private float clickThreshold = 10f;
 
     private Camera cam;
